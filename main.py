@@ -4,6 +4,7 @@ from xml.dom import minidom
 from fastapi import FastAPI
 import json
 import pandas
+import requests
 
 # done in class
 def getHtml(website):
@@ -47,21 +48,32 @@ def timestamp():
     return current_datetime
 
 # exercise 2 continued, now using pandas library for everything except for the .txt, that is only retrieved
-
 #  for the documentation, after the server is started, the API docs are to be found at 127.0.0.1:8080/docs
+
+
 @app.get("/txt")
 def get_txt():
     return readTxt("text.txt")
+
 
 @app.get("/json")
 def get_json():
     json_file = pandas.read_json("text.json")
     return json_file.to_json()
 
+
 @app.get("/xml")
 def get_xml():
     xml_file = pandas.read_xml("text.xml")
     return xml_file.to_json()
+
+# continuation of the date exercise, when the node is run, the timestamp from that server is retrieved here
+
+
+@app.get("/js/timestamp")
+def js_timestamp():
+    response = requests.get('http://localhost:3000/timestamp')
+    return response.text[1:-1]
 
 # if __name__ == '__main__':
     # exercise at class
