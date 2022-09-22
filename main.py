@@ -1,4 +1,3 @@
-import urllib.request
 import datetime
 from xml.dom import minidom
 from fastapi import FastAPI
@@ -6,32 +5,26 @@ import json
 import pandas
 import requests
 
-# done in class
-def getHtml(website):
-    fp = urllib.request.urlopen(website)
-    mybytes = fp.read()
-
-    mystr = mybytes.decode("utf8")
-    fp.close()
-    with open("index.html", "w") as file:
-        file.write(mystr)
-
 # exercise 1, run uncommenting the main at the end of this file
 def readJson():
     file = open("text.json")
     data = json.load(file)
     glossary = data['glossary']
-    print(glossary['title'])
+    print('To showcase that I can find the title of this glossary, here it is:', glossary['title'])
 
 
 def readXml():
     xmldoc = minidom.parse("text.xml")
-    print(xmldoc.firstChild.tagName)
+    print('first tag to showcase I can play with it is:', xmldoc.firstChild.tagName)
 
 
-def readTxt(fileName):
-    with open(fileName, "r") as file:
-        return file.read().strip()
+def readTxt(filename):
+    with open(filename, "r") as file:
+        print(file.read().strip())
+        file.close()
+
+    with open(filename, "r") as file:
+        return file.read()
 
 
 app = FastAPI()
@@ -59,13 +52,13 @@ def get_txt():
 @app.get("/json")
 def get_json():
     json_file = pandas.read_json("text.json")
-    return json_file.to_json()
+    return json_file.to_string()
 
 
 @app.get("/xml")
 def get_xml():
-    xml_file = pandas.read_xml("text.xml")
-    return xml_file.to_json()
+    xml_file = pandas.read_xml("text.xml", xpath='//note')
+    return xml_file.to_string()
 
 # continuation of the date exercise, when the node is run, the timestamp from that server is retrieved here
 
@@ -76,12 +69,6 @@ def js_timestamp():
     return response.text[1:-1]
 
 # if __name__ == '__main__':
-    # exercise at class
-    # getHtml("http://www.python.org")
-
-    # exercise 1
     # readXml()
     # readJson()
-    # readTxt()
-
-    # exercise 2
+    # readTxt("text.txt")
